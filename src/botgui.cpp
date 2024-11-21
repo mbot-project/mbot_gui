@@ -6,6 +6,7 @@
 // #include <utils/optitrack_channels.h>
 // #include <planning/planning_channels.h>
 // #include <planning/motion_planner.hpp>
+#include <mbot_lcm_msgs/planner_request_t.hpp>
 #include <vx/gtk/vx_gtk_display_source.h>
 #include <vx/vx_colors.h>
 #include <gdk/gdk.h>
@@ -151,7 +152,13 @@ int BotGui::onMouseEvent(vx_layer_t* layer,
             }
         }
         // Otherwise, just assume points are in the odometry frame
-        lcmInstance_ -> publish(BOTGUI_GOAL_CHANNEL, &target);
+        mbot_lcm_msgs::planner_request_t request;
+        request.utime = target.utime;
+        request.goal = target;
+        request.require_plan = 1;
+
+        lcmInstance_->publish(PATH_REQUEST_CHANNEL, &request);
+
     }
     
     
